@@ -59,7 +59,13 @@ app.get('/players/:playerId', async (request, response) => {
     WHERE
       player_id=${playerId};`
   const player = await db.get(getCricketQuery)
-  response.send(player)
+  const convertDbObjectToResponseObject = {
+    playerId: player.player_id,
+    playerName: player.player_name,
+    jerseyNumber: player.jersey_number,
+    role: player.role,
+  }
+  response.send(convertDbObjectToResponseObject)
 })
 
 app.post('/players/', async (request, response) => {
@@ -70,9 +76,9 @@ app.post('/players/', async (request, response) => {
       cricket_team(player_name,jersey_number,role)
     VALUES
       (
-         ${playerName},
+         "${playerName}",
          ${jerseyNumber},
-         ${role},
+         "${role}"
          
       )`
 
@@ -91,7 +97,7 @@ app.put('/players/:playerId/', async (request, response) => {
     SET
       player_name='${playerName}',
       jersey_number=${jerseyNumber},
-      role=${role},
+      role="${role}"
      
     WHERE
       player_id = ${playerId};`
